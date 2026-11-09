@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Estrutura para os nós da lista encadeada (Baldes) */
+struct No {
+    float valor;
+    struct No *proximo;
+}; 
+
+/* Função para inserir um elemento de forma ordenada no balde */
+struct No *inserirOrdenado(struct No *lista, float valor) {
+    struct No *novoNo = (struct No *)malloc(sizeof(struct No));
+    novoNo->valor = valor;
+    novoNo->proximo = NULL;
+
+    // Se a lista estiver vazia ou o novo valor for menor que o primeiro
+    if (lista == NULL || lista->valor >= valor) {
+        novoNo->proximo = lista;
+        return novoNo;
+    }
+
+    // Localiza o ponto de inserção correto
+    struct No *atual = lista;
+    while (atual->proximo != NULL && atual->proximo->valor < valor) {
+        atual = atual->proximo;
+    }
+
+    novoNo->proximo = atual->proximo;
+    atual->proximo = novoNo;
+    
+    return lista;
+}
+
+/* Função principal do Bucket Sort (Adaptada para qualquer intervalo de números) */
+void bucketSort(float vetor[], int n) {
+    if (n <= 0) return;
+
+    // 1. Encontra o menor e o maior valor do vetor para fazer a normalização
+    float menor = vetor[0];
+    float maior = vetor[0];
+    for (int i = 1; i < n; i++) {
+        if (vetor[i] < menor) menor = vetor[i];
+        if (vetor[i] > maior) maior = vetor[i];
+    }
+
+    // Se todos os elementos forem iguais, já está ordenado
+    if (menor == maior) return;
+
+    // 2. Inicializa os baldes (vetor de ponteiros para nós)
+    struct No **baldes = (struct No **)calloc(n, sizeof(struct No *));
+    if (baldes == NULL) {
+        printf("Erro de alocação de memória.\n");
+        return;
+    }
+
+    // 3. Distribuição (Scatter) com mapeamento dinâmico para qualquer intervalo
+    for (int i = 0; i < n; i++) {
+        // Mapeia o valor linearmente para o intervalo [0, 1) e multiplica por n
+        int indiceBalde = (int)((vetor[i] - menor) / (maior - menor) * (n - 1));
+        
+        // Insere o elemento ordenadamente no respetivo balde
+        baldes[indiceBalde] = inserirOrdenado(baldes[indiceBalde], vetor[i]);
+    }
+
+    // 4. Coleta (Gather): junta todos os baldes de volta no vetor original
+    int indiceVetor = 0;
+    for (int i = 0; i < n; i++) {
+        struct No *atual = baldes[i];
+        while (atual != NULL) {
+            vetor[indiceVetor++] = atual->valor;
+            
+            // Libera a memória do nó após o uso
+            struct No *temp = atual;
+            atual = atual->proximo;
+            free(temp);
+        }
+    }
+    
+    // Libera o vetor de ponteiros principal
+    free(baldes);
+}
+
+// Função auxiliar para imprimir o vetor
+void imprimirVetor(float vetor[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%.2f ", vetor[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    // Testando com números fora do intervalo de 0 a 1 (ex: negativos e números maiores)
+    float vetor[] = {1511, -18463, -37407, 63983, -10575, -91889, 64628, -77710, 15482, 22387};
+    int n = sizeof(vetor) / sizeof(vetor[0]);
+
+    printf("Vetor original: \n");
+    imprimirVetor(vetor, n);
+
+    bucketSort(vetor, n);
+
+    printf("\nVetor ordenado: \n");
+    imprimirVetor(vetor, n);
+
+    return 0;
+}

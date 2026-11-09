@@ -1,0 +1,73 @@
+//Chamando biblioteca que tem a função printf
+#include <stdio.h>
+
+//Criando nossa função de busca binaria, passando como parametro o vetor, o item a ser comparado, o valor do menor e maior indice do vetor
+int buscaBinaria(int vetor[], int item, int menorIndice, int maiorIndice) {
+  //Criando um looping while, que permanecerá enquanto meu menor indice, for menor ou igual ao meu maior indice
+  while(menorIndice <= maiorIndice) {
+    //Inicializamos a variavel de indice medio igual ao meu menor indice somado com a diferença do meu maior indice com o menor indice, por fim divididos por 2
+    int indiceMedio = menorIndice + (maiorIndice - menorIndice) / 2;
+
+    //Verifica se o meu valor onde o indice medio se encontra e igual ao do item comparado
+    if (vetor[indiceMedio] == item) {
+      return indiceMedio + 1; //Se for, adiciona meu valor de indice medio uma casa a direita
+    }
+
+    //Verifica se o meu valor onde o indice medio se encontra e menor ao do item comparado
+    if (vetor[indiceMedio] < item) {
+      menorIndice = indiceMedio + 1; //Se for, adiciona meu valor de indice menor uma casa a direita do meu indice medio
+    } 
+    //Verifica se o meu valor onde o indice medio se encontra e maior ao do item comparado 
+    else { 
+      maiorIndice = indiceMedio - 1; //Se for, adiciona meu valor de indice maior uma casa a esquerda do meu indice medio
+    }
+  }
+
+  //Caso menor indice, maior que meu maior indice. Retorne o menor indice
+  return menorIndice;
+}
+
+//Criando o método de inserção por binarios, passando como parametro o vetor e o tamanho do mesmo
+void binaryInsertionSort(int vetor[], int tamanho) {
+  //Percorrendo o vetor por completo
+  for (int indice1 = 1; indice1 < tamanho; indice1++) {
+    //Inicializamos a variavel chave, sendo igual ao meu valor do vetor onde o indice é igual ao indice1 do nosso laço
+    int chave = vetor[indice1];
+    //Inicializamos a variavel pos, que guardara a posição retornada pela busca binaria
+    int pos = buscaBinaria(vetor, chave, 0, indice1 - 1);
+
+    //Inicializamos o indice2, que é igual ao indice1 - 1
+    int indice2 = indice1 - 1;
+    //Criamos um looping while, enquanto o indice2 for maior ou igual a pos da busca binaria
+    while (indice2 >= pos) {
+      vetor[indice2 + 1] = vetor[indice2]; //Se for define que o valor de posição do vetor onde o indice for o indice 2 - 1, será movido uma casa a esquerda
+      indice2--; //Subtrai 1 do indice2
+    }
+
+    //Depois de terminar o looping, define que o valor do vetor onde o indice e igual ao indice2 - 1, será nossa nova chave
+    vetor[indice2 + 1] = chave;
+  }
+}
+
+//Aqui criamos nosso main e chamamos nosso método
+int main() {
+  //Inicialimos o vetor com 7 números, com indices de 0 a 6
+  int vetor[] = {37, 23, 0, 17, 12, 72, 31};
+  //Inicializamos a variavel tamanho, que será igual ao total de bytes do vetor por completo, dividido pelo tamanho de bytes de um elemento do vetor. Nesse caso: tamanho = 28 / 4 = 7
+  int tamanho = sizeof(vetor) / sizeof(vetor[0]);
+
+  //Chamando nosso metodo, passando os parametros vetor e tamanho
+  binaryInsertionSort(vetor, tamanho);
+
+  //Imprimindo o nosso vetor ordenado
+  printf("Vetor ordenado: ");
+  //Percorre todo o vetor, imprimindo um número ao lado do outro
+  for (int indice = 0; indice < tamanho; indice++) {
+    printf("%d ", vetor[indice]);
+  }
+  //Quebra de linha
+  printf("\n");
+
+  //Retorna 0 se tudo der certo
+  return 0;
+}

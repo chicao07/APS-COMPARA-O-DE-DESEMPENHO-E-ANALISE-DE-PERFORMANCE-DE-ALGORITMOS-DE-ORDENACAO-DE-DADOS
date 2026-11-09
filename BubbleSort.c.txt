@@ -1,0 +1,48 @@
+//Chamando biblioteca que tem a função printf
+#include <stdio.h>
+
+//Criando algoritmo de ordenação Bubble sort, com o vetor e o tamanho como parametro
+void bubbleSort(int vetor[], int tamanho) {
+  //Percorremos e verificamos todos os indicies, o numero do vetor de vezes, para ter certeza que verificamos todos os numeros
+    for (int indice1 = 0; indice1 < tamanho - 1; indice1++) {
+        int trocou = 0; //Reinicia a variavel troca
+        //Percorremos e verificamos todos os indicies, o numero do vetor de vezes - o indicie 1 (para evitarmos verificar o ultimo numero, pois o mesmo já foi comparado com todos os outros, sendo declarado o maior). Para ter certeza que verificamos todos os numeros
+        for (int indice2 = 0; indice2 < tamanho - 1 - indice1; indice2++) {
+          //Verifica se o vetor do indicie 2 é maior que o proximo indicie comparado
+            if (vetor[indice2] > vetor[indice2 + 1]) {
+              //Inicia uma variavel que guardará o valor da variavel maior de indicie 2
+                int guardaValor = vetor[indice2];
+                //Troca a variavel antiga pela menor, fazendo assim a troca de posições 
+                vetor[indice2] = vetor[indice2 + 1];
+                //Na posição antiga onde ficava o numero menor, e passado o valor que foi guardado anteriormente, assim os ordenando em ordem crescente
+                vetor[indice2 + 1] = guardaValor;
+                //Por fim, definimos o atributo troca igual a 1, para dizermos que houve uma troca
+                trocou = 1;
+            }
+        }
+        //Verifica se trocou é falso, ou seja valor = 0
+        if (!trocou) {
+            break; //Quebra o laço for, pois não há mais trocas
+        }
+    }
+}
+//Aqui chamamos nosso algoritmo
+int main() {
+  //Criando um vetor de 7 números com indicies de 0 a 6
+    int vetor[] = {64, 34, 25, 12, 22, 11, 90};
+    //Criando a variavel de tamanho, com uma divisão entre a quantidade total de bytes do vetor pela quantidade total de um elemento do vetor
+    int tamanho = sizeof(vetor) / sizeof(vetor[0]);
+
+    //Chamando nosso algoritmo
+    bubbleSort(vetor, tamanho);
+
+    //Imprimindo o nosso vetor ordenado
+    printf("Vetor ordenado: ");
+    //Percorre todo o vetor, imprimindo um número ao lado do outro
+    for (int indice1 = 0; indice1 < tamanho; indice1++) {
+        printf("%d ", vetor[indice1]);
+    }
+
+    //Retorna 0 se tudo der certo
+    return 0;
+}
